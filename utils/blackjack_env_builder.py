@@ -1,6 +1,7 @@
 import numpy as np
 import random
 
+
 class BlackJackActions:
     '''
     
@@ -124,8 +125,19 @@ class BlackJackStylised:
         
         # TODO WIP  Finite sampler for finite deck 
         else:
+            
+            if self.deck_complete:
+                self.hand_complete = True
+                return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
+
             if action == 1:
-                self.player_hand.append(self._finitsampler(init=False)[0])
+                card_drawn = self._finitsampler(init=False)[0]
+                
+                if self.deck_complete:
+                    self.hand_complete = True
+                    return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
+                    
+                self.player_hand.append(card_drawn)
                 self.current_sum = sum(self.get_card_value(self.player_hand))
 
                 if self.current_sum > self._max_hand_value:
@@ -158,7 +170,7 @@ class BlackJackStylised:
             cards_dealt = self.decks[-2:]
             self.decks =  self.decks[:-2]
             
-            self.card_counter[self._get_suitless_card(cards_dealt[0])]['curr_count'] -= 1 
+            self.card_counter[self._get_suitless_card(cards_dealt[0])]['curr_count'] -= 1
             self.card_counter[self._get_suitless_card(cards_dealt[1])]['curr_count'] -= 1
             
             return cards_dealt
@@ -205,7 +217,7 @@ class BlackJackStylised:
         card_keys = self._face_cards + self._ace + self._number_cards
         self.card_counter = {}
         for key in card_keys:
-            self.card_counter[key] = {'curr_count':self.num_decks, 'total':self.num_decks}
+            self.card_counter[key] = {'curr_count':self.num_decks*4, 'total':self.num_decks*4}
                     
         
 
