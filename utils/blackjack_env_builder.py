@@ -54,13 +54,14 @@ class BlackJackStylised:
         self.max_episodes = max_episodes
         self.inf_deck = False
         self.deck_complete = False
-        self.reset_init(hard=True)
+        # self.reset_init(hard=True)
         
     
     def reset_init(self, hard=False):
         '''
         TODO 
         ***Handle Natural black jack while dealing***
+        returns Tuple(cards in hand, total sum, useable ace bool, hand complete bool)
         '''
         
         if self.num_decks is None or hard == True:
@@ -76,19 +77,20 @@ class BlackJackStylised:
             self.usable_ace = False
             
         if self.num_decks is None:
-            self.player_hand = self._infinitsampler(init = True)
+            self.player_hand = self._infinitsampler(init = False) #True
         else:
             if self.deck_complete:
                 self.hand_complete = True
-                self.current_sum = sum(self.get_card_value(self.player_hand))
+                # self.current_sum = sum(self.get_card_value(self.player_hand))
+                self.current_sum = self.get_card_value(self.player_hand)
                 return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
                 
-            self.player_hand = self._finitsampler(init = True)
+            self.player_hand = self._finitsampler(init = False) #True
             
         
-        self.current_sum = sum(self.get_card_value(self.player_hand))
+        self.current_sum = self.get_card_value(self.player_hand)
         
-        if self.current_sum > self._max_hand_value:
+        if self.current_sum == self._max_hand_value:
             self.hand_complete = True
             print("That's a natural black jack")
                 
@@ -99,6 +101,7 @@ class BlackJackStylised:
         '''
         returns Tuple(cards in hand, total sum, useable ace bool, hand complete bool)
         '''
+        
         if self.hand_complete == True:
             raise Exception('Hand is complete, reset before drawing a card!')
             
@@ -113,7 +116,7 @@ class BlackJackStylised:
         if self.inf_deck: 
             if action == 1:
                 self.player_hand.append(self._infinitsampler(init=False)[0])
-                self.current_sum = sum(self.get_card_value(self.player_hand))
+                self.current_sum = self.get_card_value(self.player_hand)
 
                 if self.current_sum > self._max_hand_value:
                     self.hand_complete = True
@@ -138,7 +141,7 @@ class BlackJackStylised:
                     return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
                     
                 self.player_hand.append(card_drawn)
-                self.current_sum = sum(self.get_card_value(self.player_hand))
+                self.current_sum = self.get_card_value(self.player_hand)
 
                 if self.current_sum > self._max_hand_value:
                     self.hand_complete = True
@@ -226,21 +229,40 @@ class BlackJackStylised:
         Returns list of card values individually
         '''
         
-        hand_values = []
+        non_ace_hand_values = []
+        ace_count = 0
+        num_usable_aces = 0
+        
         for card in cards:
             suitless_card = card.split('.')[-1]
 
             if suitless_card in self._number_cards:
-                hand_values.append(int(suitless_card))
+                non_ace_hand_values.append(int(suitless_card))
 
             elif suitless_card == 'A':
-                if self.current_sum + self._usable_ace > 21:
-                    self.usable_ace = False
-                    hand_values.append(self._unusable_ace)
-                else:
-                    self.usable_ace = True
-                    hand_values.append(self._usable_ace)
+                ace_count += 1
             else:
-                hand_values.append(self._face_cards_value)
-        return hand_values
+                non_ace_hand_values.append(self._face_cards_value)
+                
+        non_ace_curr_sum = sum(non_ace_hand_values)
+        # print(f'DEBUG : non_ace_curr_sum : {non_ace_curr_sum}')
+    
+        if ace_count > 0:
+            num_usable_aces = self._ace_accomodation(non_ace_curr_sum)
+            if num_usable_aces > 0:
+                self.usable_ace = True
+            else:
+                self.usable_ace = False
+        else:
+             self.usable_ace = False
+                
+        return non_ace_curr_sum + num_usable_aces*self._usable_ace + (ace_count-num_usable_aces)
+
+        
+    def _ace_accomodation(self, non_ace_curr_sum):
+        check_val = np.floor((self._max_hand_value - non_ace_curr_sum)/self._usable_ace)
+        if check_val < 0:
+            return 0
+        return check_val
+        # return curr_sum
         
