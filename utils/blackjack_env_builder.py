@@ -48,12 +48,13 @@ class BlackJackStylised:
 
     _suitless_group = _ace + _face_cards + _number_cards
     
-    def __init__(self, num_decks=None, max_episodes=None):
+    def __init__(self, num_decks=None, max_episodes=None, verbose=False):
     
         self.num_decks = num_decks
         self.max_episodes = max_episodes
         self.inf_deck = False
         self.deck_complete = False
+        self.verbose = verbose
         # self.reset_init(hard=True)
         
     
@@ -73,6 +74,7 @@ class BlackJackStylised:
             self.deck_complete = False
         
         else:
+            self.episode_counter = 0
             self.hand_complete = False
             self.usable_ace = False
             
@@ -92,7 +94,8 @@ class BlackJackStylised:
         
         if self.current_sum == self._max_hand_value:
             self.hand_complete = True
-            print("That's a natural black jack")
+            if self.verbose:
+                print("That's a natural black jack")
                 
         return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
         
@@ -120,7 +123,8 @@ class BlackJackStylised:
 
                 if self.current_sum > self._max_hand_value:
                     self.hand_complete = True
-                    print('Player is bust total sum is greater than 21!')
+                    if self.verbose:
+                        print('Player is bust total sum is greater than 21!')
                 return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
             else:
                 self.hand_complete = True
@@ -145,7 +149,8 @@ class BlackJackStylised:
 
                 if self.current_sum > self._max_hand_value:
                     self.hand_complete = True
-                    print('Player is bust total sum is greater than 21!')
+                    if self.verbose:
+                        print('Player is bust total sum is greater than 21!')
                 return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
             else:
                 self.hand_complete = True
@@ -264,5 +269,4 @@ class BlackJackStylised:
         if check_val < 0:
             return 0
         return check_val
-        # return curr_sum
         
