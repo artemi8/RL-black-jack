@@ -1,0 +1,1 @@
+Tendency to stick increases at an early point of time (in terms of sum of the hand as state) with decrease in Gamma value
