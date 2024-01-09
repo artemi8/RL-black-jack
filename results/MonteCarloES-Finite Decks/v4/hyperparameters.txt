@@ -1,0 +1,9 @@
+Deck = Finite, 3
+
+init_config= {'init_state_action_val': 0,
+              'epsilon' : 0.25,
+              'gamma' : 0.70}
+agent_v1 = MonteCarloES(states=list(range(2, 22)), actions=[0, 1],
+                        init_config=init_config)
+
+total_episodes = 10,00,000

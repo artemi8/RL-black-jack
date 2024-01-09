@@ -105,7 +105,7 @@ class BlackJackStylised:
         returns Tuple(cards in hand, total sum, useable ace bool, hand complete bool)
         '''
         
-        if self.hand_complete == True:
+        if self.hand_complete == True and self.inf_deck:
             raise Exception('Hand is complete, reset before drawing a card!')
             
         if self.max_episodes is not None:
@@ -138,12 +138,12 @@ class BlackJackStylised:
                 return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
 
             if action == 1:
-                card_drawn = self._finitsampler(init=False)[0]
+                card_drawn = self._finitsampler(init=False)
                 
                 if self.deck_complete:
                     self.hand_complete = True
                     return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
-                    
+                card_drawn = card_drawn[0]
                 self.player_hand.append(card_drawn)
                 self.current_sum = self.get_card_value(self.player_hand)
 
