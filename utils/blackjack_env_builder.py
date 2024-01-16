@@ -56,7 +56,7 @@ class BlackJackStylised:
         self.deck_complete = False
         self.verbose = verbose
         # self.reset_init(hard=True)
-        
+        # print('init env')        
     
     def reset_init(self, hard=False):
         '''
@@ -148,7 +148,12 @@ class BlackJackStylised:
                 self.current_sum = self.get_card_value(self.player_hand)
 
                 if self.current_sum > self._max_hand_value:
-                    self.hand_complete = True
+                    if self.usable_ace:
+                        # print('usable ace')
+                        self.current_sum -= 10
+                        self.usable_ace = False
+                        self.hand_complete = True
+                    # self.hand_complete = True
                     if self.verbose:
                         print('Player is bust total sum is greater than 21!')
                 return (self.player_hand, self.current_sum, self.usable_ace, self.hand_complete)
