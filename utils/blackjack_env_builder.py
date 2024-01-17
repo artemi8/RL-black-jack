@@ -148,10 +148,11 @@ class BlackJackStylised:
                 self.current_sum = self.get_card_value(self.player_hand)
 
                 if self.current_sum > self._max_hand_value:
-                    if self.usable_ace:
+                    if self.usable_ace: 
                         # print('usable ace')
                         self.current_sum -= 10
                         self.usable_ace = False
+                    else:
                         self.hand_complete = True
                     # self.hand_complete = True
                     if self.verbose:
