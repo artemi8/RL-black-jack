@@ -1,5 +1,7 @@
 # Files
 RL-Blackjack.pdf
+submission_files/
+submission_file.ipynb
 
 # Directories/
 PRL/
@@ -7,3 +9,5 @@ PRL/
 # Temporary Files
 .ipynb_checkpoints*
 __pycache__*
+
+
